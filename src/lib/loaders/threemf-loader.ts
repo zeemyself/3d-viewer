@@ -191,20 +191,20 @@ async function loadComponentModels(
   zipContent: JSZip,
   componentPaths: string[],
 ): Promise<ParsedModel[]> {
-  const objects: ParsedModel[] = []
+  const results = await Promise.all(
+    componentPaths.map(async (path) => {
+      const normalizedPath = path.startsWith('/') ? path.slice(1) : path
+      const file = zipContent.file(normalizedPath)
+      if (!file) return []
 
-  for (const path of componentPaths) {
-    const normalizedPath = path.startsWith('/') ? path.slice(1) : path
-    const file = zipContent.file(normalizedPath)
-    if (!file) continue
+      const xmlContent = await file.async('text')
+      const { objects: componentObjects } =
+        parse3MFModelWithComponents(xmlContent)
+      return componentObjects
+    }),
+  )
 
-    const xmlContent = await file.async('text')
-    const { objects: componentObjects } =
-      parse3MFModelWithComponents(xmlContent)
-    objects.push(...componentObjects)
-  }
-
-  return objects
+  return results.flat()
 }
 
 function createGeometryFromParsed(model: ParsedModel): BufferGeometry {
