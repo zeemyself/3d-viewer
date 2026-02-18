@@ -55,15 +55,10 @@ const HintText = memo(function HintText() {
 
 interface Viewer3DProps {
   model: LoadedModel | null
-  selectedObjectIndex: number
   objectVisibility: boolean[]
 }
 
-export function Viewer3D({
-  model,
-  selectedObjectIndex,
-  objectVisibility,
-}: Viewer3DProps) {
+export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -214,18 +209,8 @@ export function Viewer3D({
     meshesRef.current.forEach((mesh, index) => {
       const isVisible = objectVisibility[index] ?? true
       mesh.visible = isVisible
-
-      if (mesh.material instanceof THREE.MeshStandardMaterial) {
-        if (index === selectedObjectIndex && objectVisibility[index]) {
-          mesh.material.color.setHex(0xb35b21)
-          mesh.material.emissive.setHex(0x1a0a02)
-        } else {
-          mesh.material.color.setHex(0x1a6f63)
-          mesh.material.emissive.setHex(0x000000)
-        }
-      }
     })
-  }, [selectedObjectIndex, objectVisibility, isInitialized])
+  }, [objectVisibility, isInitialized])
 
   const resetCamera = useCallback(() => {
     if (cameraRef.current && controlsRef.current) {

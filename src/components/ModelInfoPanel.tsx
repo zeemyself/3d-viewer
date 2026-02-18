@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import * as THREE from 'three'
 import {
   calculateModelInfo,
   formatNumber,
@@ -8,21 +9,80 @@ import type { LoadedModel } from '../lib/types'
 
 interface ModelInfoPanelProps {
   model: LoadedModel | null
-  selectedIndex: number
+  visibility: boolean[]
 }
 
-export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
-  const modelInfo = useMemo(() => {
+export function ModelInfoPanel({ model, visibility }: ModelInfoPanelProps) {
+  const aggregatedInfo = useMemo(() => {
     if (!model) return null
-    const selectedObject = model.objects[selectedIndex]
-    if (!selectedObject) return null
-    return calculateModelInfo(selectedObject.geometry)
-  }, [model, selectedIndex])
 
-  if (!model || !modelInfo) return null
+    const visibleObjects = model.objects.filter((_, index) => visibility[index])
+    if (visibleObjects.length === 0) return null
+
+    if (visibleObjects.length === 1) {
+      const info = calculateModelInfo(visibleObjects[0].geometry)
+      return {
+        isSingle: true,
+        name: visibleObjects[0].name,
+        ...info,
+      }
+    }
+
+    const box = new THREE.Box3()
+    let totalVolume = 0
+    let totalTriangles = 0
+    let totalVertices = 0
+
+    for (const obj of visibleObjects) {
+      const info = calculateModelInfo(obj.geometry)
+      const mesh = new THREE.Mesh(obj.geometry.clone())
+      box.expandByObject(mesh)
+      totalVolume += info.volume
+      totalTriangles += info.triangleCount
+      totalVertices += info.vertexCount
+    }
+
+    const size = box.getSize(new THREE.Vector3())
+
+    return {
+      isSingle: false,
+      objectCount: visibleObjects.length,
+      dimensions: { x: size.x, y: size.y, z: size.z },
+      volume: totalVolume,
+      triangleCount: totalTriangles,
+      vertexCount: totalVertices,
+    }
+  }, [model, visibility])
+
+  if (!model) return null
+
+  if (!aggregatedInfo) {
+    return (
+      <div className="panel-inner animate-slide-up">
+        <h3
+          className="mb-3 text-xs font-semibold uppercase tracking-wider"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
+          Geometry Data
+        </h3>
+        <div className="panel-surface p-3.5 text-center">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            No objects selected
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const displayName =
+    'name' in aggregatedInfo
+      ? aggregatedInfo.name
+      : `${aggregatedInfo.objectCount} objects`
+  const subtitle =
+    'name' in aggregatedInfo ? 'Selected mesh details' : 'Combined geometry'
 
   return (
-    <div className="panel-inner">
+    <div className="panel-inner animate-slide-up">
       <h3
         className="mb-3 text-xs font-semibold uppercase tracking-wider"
         style={{ color: 'var(--text-tertiary)' }}
@@ -38,13 +98,13 @@ export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
                 className="truncate text-sm font-semibold"
                 style={{ color: 'var(--text-primary)' }}
               >
-                {model.name}
+                {displayName}
               </p>
               <p
                 className="mt-0.5 text-xs"
                 style={{ color: 'var(--text-tertiary)' }}
               >
-                Selected mesh details
+                {subtitle}
               </p>
             </div>
             <div
@@ -62,9 +122,21 @@ export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
 
         <div className="grid grid-cols-3 gap-2">
           {[
-            { label: 'X', value: modelInfo.dimensions.x, axis: 'width' },
-            { label: 'Y', value: modelInfo.dimensions.y, axis: 'depth' },
-            { label: 'Z', value: modelInfo.dimensions.z, axis: 'height' },
+            {
+              label: 'X',
+              value: aggregatedInfo.dimensions.x,
+              axis: 'width',
+            },
+            {
+              label: 'Y',
+              value: aggregatedInfo.dimensions.y,
+              axis: 'depth',
+            },
+            {
+              label: 'Z',
+              value: aggregatedInfo.dimensions.z,
+              axis: 'height',
+            },
           ].map(({ label, value, axis }) => (
             <div key={label} className="metric-card p-3">
               <div className="mb-1 flex items-center gap-1.5">
@@ -129,7 +201,7 @@ export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
                 fontFamily: 'var(--font-mono)',
               }}
             >
-              {formatVolume(modelInfo.volume)}
+              {formatVolume(aggregatedInfo.volume)}
             </div>
           </div>
 
@@ -181,7 +253,7 @@ export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                {modelInfo.triangleCount.toLocaleString()}
+                {aggregatedInfo.triangleCount.toLocaleString()}
               </p>
             </div>
             <div>
@@ -195,7 +267,7 @@ export function ModelInfoPanel({ model, selectedIndex }: ModelInfoPanelProps) {
                   fontFamily: 'var(--font-mono)',
                 }}
               >
-                {modelInfo.vertexCount.toLocaleString()}
+                {aggregatedInfo.vertexCount.toLocaleString()}
               </p>
             </div>
           </div>

@@ -16,7 +16,6 @@ function HomePage() {
   const [model, setModel] = useState<LoadedModel | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedObjectIndex, setSelectedObjectIndex] = useState(0)
   const [objectVisibility, setObjectVisibility] = useState<boolean[]>([])
 
   const handleFileSelect = useCallback(async (file: File) => {
@@ -32,7 +31,6 @@ function HomePage() {
     try {
       const loadedModel = await loadModel(file)
       setModel(loadedModel)
-      setSelectedObjectIndex(0)
       setObjectVisibility(
         Array.from({ length: loadedModel.objectCount }, () => true),
       )
@@ -42,10 +40,6 @@ function HomePage() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
-
-  const handleObjectSelect = useCallback((index: number) => {
-    setSelectedObjectIndex(index)
   }, [])
 
   const handleVisibilityChange = useCallback(
@@ -59,10 +53,19 @@ function HomePage() {
     [],
   )
 
+  const handleSelectAll = useCallback(() => {
+    if (!model) return
+    setObjectVisibility(Array.from({ length: model.objectCount }, () => true))
+  }, [model])
+
+  const handleUnselectAll = useCallback(() => {
+    if (!model) return
+    setObjectVisibility(Array.from({ length: model.objectCount }, () => false))
+  }, [model])
+
   const handleReset = useCallback(() => {
     setModel(null)
     setError(null)
-    setSelectedObjectIndex(0)
     setObjectVisibility([])
   }, [])
 
@@ -128,8 +131,12 @@ function HomePage() {
             )}
           </div>
 
-          <div className="panel-scroller">
-            {!model && !isLoading && !error && (
+          {model && (
+            <ModelInfoPanel model={model} visibility={objectVisibility} />
+          )}
+
+          {!model && !isLoading && !error && (
+            <div className="panel-scroller">
               <div className="panel-inner animate-fade-in">
                 <div className="subtle-card mb-3">
                   <p
@@ -211,9 +218,11 @@ function HomePage() {
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {error && (
+          {error && (
+            <div className="panel-scroller">
               <div className="panel-inner animate-fade-in">
                 <div
                   className="subtle-card"
@@ -267,24 +276,20 @@ function HomePage() {
                   </button>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {model && (
-              <div className="animate-slide-up">
-                <ObjectSelector
-                  model={model}
-                  selectedIndex={selectedObjectIndex}
-                  visibility={objectVisibility}
-                  onSelect={handleObjectSelect}
-                  onVisibilityChange={handleVisibilityChange}
-                />
-                <ModelInfoPanel
-                  model={model}
-                  selectedIndex={selectedObjectIndex}
-                />
-              </div>
-            )}
-          </div>
+          {model && (
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <ObjectSelector
+                model={model}
+                visibility={objectVisibility}
+                onVisibilityChange={handleVisibilityChange}
+                onSelectAll={handleSelectAll}
+                onUnselectAll={handleUnselectAll}
+              />
+            </div>
+          )}
         </aside>
 
         <main className="main-viewer">
@@ -329,11 +334,7 @@ function HomePage() {
               </div>
             </div>
           ) : (
-            <Viewer3D
-              model={model}
-              selectedObjectIndex={selectedObjectIndex}
-              objectVisibility={objectVisibility}
-            />
+            <Viewer3D model={model} objectVisibility={objectVisibility} />
           )}
 
           {model && !showDropZone && (
