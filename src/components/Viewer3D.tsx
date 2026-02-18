@@ -94,8 +94,6 @@ export function Viewer3D({
     })
     renderer.setSize(width, height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.12
     container.appendChild(renderer.domElement)
@@ -116,9 +114,6 @@ export function Viewer3D({
 
     const mainLight = new THREE.DirectionalLight(0xfff8ec, 1.1)
     mainLight.position.set(120, 140, 100)
-    mainLight.castShadow = true
-    mainLight.shadow.mapSize.width = 2048
-    mainLight.shadow.mapSize.height = 2048
     scene.add(mainLight)
 
     const fillLight = new THREE.DirectionalLight(0x5f877f, 0.55)
@@ -197,8 +192,6 @@ export function Viewer3D({
       })
 
       const mesh = new THREE.Mesh(geometry, material)
-      mesh.castShadow = true
-      mesh.receiveShadow = true
       mesh.userData.objectIndex = index
 
       sceneRef.current?.add(mesh)
