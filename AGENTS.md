@@ -21,7 +21,8 @@ Use Bun for local development (lockfile: `bun.lock`).
 - `bun run build`: run TypeScript build checks (`tsc -b`) and create production bundle.
 - `bun run preview`: serve the built app locally.
 - `bun run lint` / `bun run lint:fix`: run or auto-fix `oxlint` issues.
-- `bun run fmt` / `bun run fmt:check`: format or check formatting with `oxfmt`.
+- `bun run fmt` / `bun run fmt:fix`: check or format with `oxfmt`.
+- `bun run verify`: run lint, format check, and build (pre-PR validation).
 
 ## Coding Style & Naming Conventions
 
@@ -36,7 +37,7 @@ TypeScript strict mode is enabled; resolve unused locals/params and avoid loose 
 
 There is no automated test suite configured yet.
 
-- Minimum pre-PR checks: `bun run build`, `bun run lint`, `bun run fmt:check`.
+- Minimum pre-PR checks: `bun run verify`.
 - Validate changes manually in `bun run dev`, including `.stl`, `.obj`, and `.3mf` upload flows.
 - If adding tests, use `*.test.ts` / `*.test.tsx` naming near related source or under `src/__tests__/`.
 

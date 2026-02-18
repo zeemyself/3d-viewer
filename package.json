@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt": "oxfmt --check",
+    "fmt:fix": "oxfmt",
+    "verify": "bun run lint && bun run fmt && bun run build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",
