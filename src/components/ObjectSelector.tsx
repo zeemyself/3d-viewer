@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { LoadedModel } from '../lib/types'
 
 interface ObjectSelectorProps {
@@ -8,7 +9,7 @@ interface ObjectSelectorProps {
   onVisibilityChange: (index: number, visible: boolean) => void
 }
 
-export function ObjectSelector({
+export const ObjectSelector = memo(function ObjectSelector({
   model,
   selectedIndex,
   visibility,
@@ -135,4 +136,4 @@ export function ObjectSelector({
       </div>
     </div>
   )
-}
+})

@@ -1,8 +1,57 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useCallback, useState, memo } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { normalizeGeometry } from '../lib/model-utils'
 import type { LoadedModel, ModelObject } from '../lib/types'
+
+function AxisIndicator() {
+  return (
+    <div
+      className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-3 rounded-xl border px-3 py-2 md:bottom-5 md:right-5"
+      style={{
+        borderColor: 'rgba(201, 175, 136, 0.8)',
+        background: 'rgba(255, 251, 243, 0.88)',
+      }}
+    >
+      <div className="axis-pill">
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: '#dd5b34' }}
+        />
+        X
+      </div>
+      <div className="axis-pill">
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: '#45a875' }}
+        />
+        Y
+      </div>
+      <div className="axis-pill">
+        <span
+          className="h-2 w-2 rounded-full"
+          style={{ background: '#3d65ba' }}
+        />
+        Z
+      </div>
+    </div>
+  )
+}
+
+const HintText = memo(function HintText() {
+  return (
+    <div
+      className="pointer-events-none absolute right-4 top-14 rounded-2xl border px-3 py-2 text-xs font-medium md:right-5 md:top-16"
+      style={{
+        borderColor: 'rgba(201, 175, 136, 0.8)',
+        background: 'rgba(255, 251, 243, 0.88)',
+        color: 'var(--text-secondary)',
+      }}
+    >
+      Drag to orbit, scroll to zoom
+    </div>
+  )
+})
 
 interface Viewer3DProps {
   model: LoadedModel | null
@@ -107,7 +156,7 @@ export function Viewer3D({
       }
     }
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, { passive: true })
     setTimeout(handleResize, 100)
 
     return () => {
@@ -270,46 +319,8 @@ export function Viewer3D({
           </button>
         </div>
 
-        <div
-          className="pointer-events-none absolute right-4 top-14 rounded-2xl border px-3 py-2 text-xs font-medium md:right-5 md:top-16"
-          style={{
-            borderColor: 'rgba(201, 175, 136, 0.8)',
-            background: 'rgba(255, 251, 243, 0.88)',
-            color: 'var(--text-secondary)',
-          }}
-        >
-          Drag to orbit, scroll to zoom
-        </div>
-
-        <div
-          className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-3 rounded-xl border px-3 py-2 md:bottom-5 md:right-5"
-          style={{
-            borderColor: 'rgba(201, 175, 136, 0.8)',
-            background: 'rgba(255, 251, 243, 0.88)',
-          }}
-        >
-          <div className="axis-pill">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ background: '#dd5b34' }}
-            />
-            X
-          </div>
-          <div className="axis-pill">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ background: '#45a875' }}
-            />
-            Y
-          </div>
-          <div className="axis-pill">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ background: '#3d65ba' }}
-            />
-            Z
-          </div>
-        </div>
+        <HintText />
+        <AxisIndicator />
       </div>
     </div>
   )

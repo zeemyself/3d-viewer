@@ -1,9 +1,5 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { LoadedModel, PrinterConfig } from '../lib/types'
-
-interface PrinterConfigPanelProps {
-  model: LoadedModel | null
-}
 
 function formatValue(value: string | number | boolean | undefined): string {
   if (value === undefined || value === null) return '-'
@@ -22,14 +18,8 @@ function formatPrintTime(seconds: number | undefined): string {
   return `${minutes}m`
 }
 
-export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
-  const [showAll, setShowAll] = useState(false)
-
-  if (!model || model.format !== '3mf' || !model.printerConfig) return null
-
-  const config: PrinterConfig = model.printerConfig
-
-  const basicSettings = [
+function buildBasicSettings(config: PrinterConfig) {
+  return [
     { label: 'Printer', value: config.printerName },
     { label: 'Material', value: config.material },
     {
@@ -56,17 +46,31 @@ export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
     },
     { label: 'Est. Time', value: formatPrintTime(config.printTime) },
   ]
+}
 
-  const allSettings = config.allSettings
-    ? Object.entries(config.allSettings)
-        .filter(
-          ([key]) =>
-            !basicSettings.some((s) =>
-              s.label.toLowerCase().includes(key.toLowerCase()),
-            ),
-        )
-        .sort((a, b) => a[0].localeCompare(b[0]))
-    : []
+interface PrinterConfigPanelProps {
+  model: LoadedModel | null
+}
+
+export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
+  const [showAll, setShowAll] = useState(false)
+
+  const config = model?.printerConfig
+
+  const basicSettings = useMemo(
+    () => (config ? buildBasicSettings(config) : []),
+    [config],
+  )
+
+  const allSettings = useMemo(() => {
+    if (!config?.allSettings) return []
+    const basicLabels = new Set(basicSettings.map((s) => s.label.toLowerCase()))
+    return Object.entries(config.allSettings)
+      .filter(([key]) => !basicLabels.has(key.toLowerCase()))
+      .sort((a, b) => a[0].localeCompare(b[0]))
+  }, [config?.allSettings, basicSettings])
+
+  if (!model || model.format !== '3mf' || !config) return null
 
   return (
     <div className="flex h-full flex-col">

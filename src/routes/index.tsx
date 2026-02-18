@@ -1,12 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useCallback } from 'react'
-import {
-  DropZone,
-  Viewer3D,
-  ObjectSelector,
-  ModelInfoPanel,
-  PrinterConfigPanel,
-} from '../components'
+import { DropZone } from '../components/DropZone'
+import { Viewer3D } from '../components/Viewer3D'
+import { ObjectSelector } from '../components/ObjectSelector'
+import { ModelInfoPanel } from '../components/ModelInfoPanel'
+import { PrinterConfigPanel } from '../components/PrinterConfigPanel'
 import { loadModel, detectFormat } from '../lib/loaders'
 import type { LoadedModel } from '../lib/types'
 
