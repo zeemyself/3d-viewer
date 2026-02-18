@@ -1,5 +1,6 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ErrorPage } from '../components/ErrorPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,4 +17,5 @@ export const Route = createRootRoute({
       <Outlet />
     </QueryClientProvider>
   ),
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
 })
