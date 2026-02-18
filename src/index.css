@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap");
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+@import 'tailwindcss';
 
 :root {
   --bg-primary: #e8dbc7;
@@ -19,9 +19,9 @@
   --accent-warning: #b26900;
   --accent-error: #b42338;
   --accent-plum: #774f9f;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-sans: "Instrument Sans", sans-serif;
-  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
 }
 
 * {
@@ -41,20 +41,31 @@ body {
   font-family: var(--font-sans);
   color: var(--text-primary);
   background:
-    radial-gradient(circle at 9% 12%, rgba(255, 255, 255, 0.75), transparent 32%),
+    radial-gradient(
+      circle at 9% 12%,
+      rgba(255, 255, 255, 0.75),
+      transparent 32%
+    ),
     radial-gradient(circle at 86% 16%, rgba(23, 105, 93, 0.2), transparent 33%),
-    radial-gradient(circle at 78% 80%, rgba(188, 116, 37, 0.18), transparent 38%),
+    radial-gradient(
+      circle at 78% 80%,
+      rgba(188, 116, 37, 0.18),
+      transparent 38%
+    ),
     var(--bg-primary);
 }
 
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   opacity: 0.35;
-  background-image: radial-gradient(rgba(97, 67, 38, 0.16) 0.65px, transparent 0.65px);
+  background-image: radial-gradient(
+    rgba(97, 67, 38, 0.16) 0.65px,
+    transparent 0.65px
+  );
   background-size: 3px 3px;
 }
 
@@ -159,7 +170,11 @@ canvas {
   overflow: hidden;
   border-radius: 1.6rem;
   border: 1px solid var(--border-subtle);
-  background: linear-gradient(155deg, rgba(255, 252, 246, 0.88), rgba(240, 226, 202, 0.9));
+  background: linear-gradient(
+    155deg,
+    rgba(255, 252, 246, 0.88),
+    rgba(240, 226, 202, 0.9)
+  );
   box-shadow:
     0 36px 90px -50px rgba(71, 45, 17, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.78);
@@ -251,7 +266,11 @@ canvas {
   position: relative;
   min-height: 22rem;
   background:
-    radial-gradient(circle at 15% 14%, rgba(255, 255, 255, 0.5), transparent 32%),
+    radial-gradient(
+      circle at 15% 14%,
+      rgba(255, 255, 255, 0.5),
+      transparent 32%
+    ),
     linear-gradient(150deg, rgba(255, 255, 255, 0.54), rgba(240, 226, 202, 0.9));
 }
 
@@ -384,7 +403,7 @@ canvas {
 }
 
 .dropzone-root::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   opacity: 0.14;
@@ -395,7 +414,11 @@ canvas {
 }
 
 .dropzone-root.is-dragging {
-  background: radial-gradient(circle at center, rgba(23, 105, 93, 0.16), transparent 66%);
+  background: radial-gradient(
+    circle at center,
+    rgba(23, 105, 93, 0.16),
+    transparent 66%
+  );
 }
 
 .dropzone-card {

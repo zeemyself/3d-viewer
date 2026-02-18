@@ -1,79 +1,89 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useCallback } from "react";
+import { createFileRoute } from '@tanstack/react-router'
+import { useState, useCallback } from 'react'
 import {
   DropZone,
   Viewer3D,
   ObjectSelector,
   ModelInfoPanel,
   PrinterConfigPanel,
-} from "../components";
-import { loadModel, detectFormat } from "../lib/loaders";
-import type { LoadedModel } from "../lib/types";
+} from '../components'
+import { loadModel, detectFormat } from '../lib/loaders'
+import type { LoadedModel } from '../lib/types'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: HomePage,
-});
+})
 
 function HomePage() {
-  const [model, setModel] = useState<LoadedModel | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedObjectIndex, setSelectedObjectIndex] = useState(0);
-  const [objectVisibility, setObjectVisibility] = useState<boolean[]>([]);
+  const [model, setModel] = useState<LoadedModel | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedObjectIndex, setSelectedObjectIndex] = useState(0)
+  const [objectVisibility, setObjectVisibility] = useState<boolean[]>([])
 
   const handleFileSelect = useCallback(async (file: File) => {
-    const format = detectFormat(file.name);
+    const format = detectFormat(file.name)
     if (!format) {
-      setError(`Unsupported file format: ${file.name}`);
-      return;
+      setError(`Unsupported file format: ${file.name}`)
+      return
     }
 
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const loadedModel = await loadModel(file);
-      setModel(loadedModel);
-      setSelectedObjectIndex(0);
-      setObjectVisibility(Array.from({ length: loadedModel.objectCount }, () => true));
+      const loadedModel = await loadModel(file)
+      setModel(loadedModel)
+      setSelectedObjectIndex(0)
+      setObjectVisibility(
+        Array.from({ length: loadedModel.objectCount }, () => true),
+      )
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load model");
-      setModel(null);
+      setError(err instanceof Error ? err.message : 'Failed to load model')
+      setModel(null)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   const handleObjectSelect = useCallback((index: number) => {
-    setSelectedObjectIndex(index);
-  }, []);
+    setSelectedObjectIndex(index)
+  }, [])
 
-  const handleVisibilityChange = useCallback((index: number, visible: boolean) => {
-    setObjectVisibility((prev) => {
-      const next = [...prev];
-      next[index] = visible;
-      return next;
-    });
-  }, []);
+  const handleVisibilityChange = useCallback(
+    (index: number, visible: boolean) => {
+      setObjectVisibility((prev) => {
+        const next = [...prev]
+        next[index] = visible
+        return next
+      })
+    },
+    [],
+  )
 
   const handleReset = useCallback(() => {
-    setModel(null);
-    setError(null);
-    setSelectedObjectIndex(0);
-    setObjectVisibility([]);
-  }, []);
+    setModel(null)
+    setError(null)
+    setSelectedObjectIndex(0)
+    setObjectVisibility([])
+  }, [])
 
-  const showDropZone = !model && !error;
-  const showRightPanel = model?.format === "3mf" && model.printerConfig;
+  const showDropZone = !model && !error
+  const showRightPanel = model?.format === '3mf' && model.printerConfig
 
   return (
     <div className="app-shell">
-      <div className={`workspace ${showRightPanel ? "has-right-panel" : ""}`}>
+      <div className={`workspace ${showRightPanel ? 'has-right-panel' : ''}`}>
         <aside className="sidebar-panel left-sidebar">
           <div className="panel-header">
             <div className="flex items-center gap-3">
               <div className="brand-icon">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -83,18 +93,38 @@ function HomePage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-base font-bold" style={{ color: "var(--text-primary)" }}>
+                <h1
+                  className="text-base font-bold"
+                  style={{ color: 'var(--text-primary)' }}
+                >
                   Foundry View
                 </h1>
-                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                <p
+                  className="text-xs"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
                   3D Model Workbench
                 </p>
               </div>
             </div>
             {model && (
-              <button onClick={handleReset} className="ghost-icon-btn" title="Load new file">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <button
+                onClick={handleReset}
+                className="ghost-icon-btn"
+                title="Load new file"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
               </button>
             )}
@@ -104,30 +134,39 @@ function HomePage() {
             {!model && !isLoading && !error && (
               <div className="panel-inner animate-fade-in">
                 <div className="subtle-card mb-3">
-                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                    Drop a printable model and inspect dimensions, mesh makeup, and slicing profile details in one
-                    workspace.
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    Drop a printable model and inspect dimensions, mesh makeup,
+                    and slicing profile details in one workspace.
                   </p>
                 </div>
 
                 <div className="subtle-card">
                   <h3
                     className="mb-3 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "var(--text-tertiary)" }}
+                    style={{ color: 'var(--text-tertiary)' }}
                   >
                     Supported Inputs
                   </h3>
                   <div className="space-y-2">
                     {[
-                      { ext: "STL", desc: "Stereolithography" },
-                      { ext: "OBJ", desc: "Wavefront" },
-                      { ext: "3MF", desc: "Manufacturing package" },
+                      { ext: 'STL', desc: 'Stereolithography' },
+                      { ext: 'OBJ', desc: 'Wavefront' },
+                      { ext: '3MF', desc: 'Manufacturing package' },
                     ].map(({ ext, desc }) => (
                       <div key={ext} className="format-row">
-                        <span className="text-xs font-semibold" style={{ color: "var(--accent-cyan)" }}>
+                        <span
+                          className="text-xs font-semibold"
+                          style={{ color: 'var(--accent-cyan)' }}
+                        >
                           .{ext.toLowerCase()}
                         </span>
-                        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                        <span
+                          className="text-xs"
+                          style={{ color: 'var(--text-tertiary)' }}
+                        >
                           {desc}
                         </span>
                       </div>
@@ -142,16 +181,24 @@ function HomePage() {
                 <div
                   className="subtle-card"
                   style={{
-                    borderColor: "rgba(180, 35, 56, 0.35)",
-                    background: "rgba(255, 236, 239, 0.9)",
+                    borderColor: 'rgba(180, 35, 56, 0.35)',
+                    background: 'rgba(255, 236, 239, 0.9)',
                   }}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
-                      style={{ background: "rgba(180, 35, 56, 0.1)", color: "var(--accent-error)" }}
+                      style={{
+                        background: 'rgba(180, 35, 56, 0.1)',
+                        color: 'var(--accent-error)',
+                      }}
                     >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -161,15 +208,24 @@ function HomePage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: "var(--accent-error)" }}>
+                      <p
+                        className="text-sm font-semibold"
+                        style={{ color: 'var(--accent-error)' }}
+                      >
                         Import failed
                       </p>
-                      <p className="mt-1 text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                      <p
+                        className="mt-1 text-xs leading-relaxed"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
                         {error}
                       </p>
                     </div>
                   </div>
-                  <button onClick={() => setError(null)} className="secondary-btn mt-4 w-full">
+                  <button
+                    onClick={() => setError(null)}
+                    className="secondary-btn mt-4 w-full"
+                  >
                     Dismiss
                   </button>
                 </div>
@@ -185,7 +241,10 @@ function HomePage() {
                   onSelect={handleObjectSelect}
                   onVisibilityChange={handleVisibilityChange}
                 />
-                <ModelInfoPanel model={model} selectedIndex={selectedObjectIndex} />
+                <ModelInfoPanel
+                  model={model}
+                  selectedIndex={selectedObjectIndex}
+                />
               </div>
             )}
           </div>
@@ -199,9 +258,17 @@ function HomePage() {
               <div className="subtle-card max-w-sm text-center">
                 <div
                   className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl"
-                  style={{ background: "rgba(180, 35, 56, 0.12)", color: "var(--accent-error)" }}
+                  style={{
+                    background: 'rgba(180, 35, 56, 0.12)',
+                    color: 'var(--accent-error)',
+                  }}
                 >
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -210,10 +277,16 @@ function HomePage() {
                     />
                   </svg>
                 </div>
-                <p className="mb-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+                <p
+                  className="mb-3 text-sm"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
                   {error}
                 </p>
-                <button onClick={() => setError(null)} className="secondary-btn">
+                <button
+                  onClick={() => setError(null)}
+                  className="secondary-btn"
+                >
                   Try another file
                 </button>
               </div>
@@ -229,7 +302,12 @@ function HomePage() {
           {model && !showDropZone && (
             <label className="floating-upload cursor-pointer px-3 py-2 text-sm font-semibold">
               <span className="flex items-center gap-2">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -244,7 +322,7 @@ function HomePage() {
                 className="hidden"
                 accept=".stl,.obj,.3mf"
                 onChange={(e) => {
-                  if (e.target.files?.[0]) handleFileSelect(e.target.files[0]);
+                  if (e.target.files?.[0]) handleFileSelect(e.target.files[0])
                 }}
               />
             </label>
@@ -258,5 +336,5 @@ function HomePage() {
         )}
       </div>
     </div>
-  );
+  )
 }

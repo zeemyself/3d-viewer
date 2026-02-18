@@ -1,11 +1,11 @@
-import type { LoadedModel } from "../lib/types";
+import type { LoadedModel } from '../lib/types'
 
 interface ObjectSelectorProps {
-  model: LoadedModel | null;
-  selectedIndex: number;
-  visibility: boolean[];
-  onSelect: (index: number) => void;
-  onVisibilityChange: (index: number, visible: boolean) => void;
+  model: LoadedModel | null
+  selectedIndex: number
+  visibility: boolean[]
+  onSelect: (index: number) => void
+  onVisibilityChange: (index: number, visible: boolean) => void
 }
 
 export function ObjectSelector({
@@ -15,12 +15,18 @@ export function ObjectSelector({
   onSelect,
   onVisibilityChange,
 }: ObjectSelectorProps) {
-  if (!model || model.objectCount <= 1) return null;
+  if (!model || model.objectCount <= 1) return null
 
   return (
-    <div className="panel-inner" style={{ borderBottom: "1px solid var(--border-dim)" }}>
+    <div
+      className="panel-inner"
+      style={{ borderBottom: '1px solid var(--border-dim)' }}
+    >
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
+        <h3
+          className="text-xs font-semibold uppercase tracking-wider"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
           Mesh Objects
         </h3>
         <span className="badge-chip">{model.objectCount}</span>
@@ -28,30 +34,45 @@ export function ObjectSelector({
 
       <div className="space-y-2">
         {model.objects.map((obj, index) => {
-          const isSelected = index === selectedIndex;
-          const isVisible = visibility[index];
+          const isSelected = index === selectedIndex
+          const isVisible = visibility[index]
 
           return (
             <div
               key={obj.id}
-              className={`object-row flex items-center gap-3 p-3 ${isSelected ? "is-selected" : ""}`}
+              className={`object-row flex items-center gap-3 p-3 ${isSelected ? 'is-selected' : ''}`}
               onClick={() => onSelect(index)}
             >
               <button
                 onClick={(e) => {
-                  e.stopPropagation();
-                  onVisibilityChange(index, !isVisible);
+                  e.stopPropagation()
+                  onVisibilityChange(index, !isVisible)
                 }}
                 className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border transition-colors"
                 style={{
-                  borderColor: isVisible ? "rgba(201, 175, 136, 0.9)" : "rgba(201, 175, 136, 0.5)",
-                  background: isVisible ? "rgba(255, 255, 255, 0.6)" : "transparent",
+                  borderColor: isVisible
+                    ? 'rgba(201, 175, 136, 0.9)'
+                    : 'rgba(201, 175, 136, 0.5)',
+                  background: isVisible
+                    ? 'rgba(255, 255, 255, 0.6)'
+                    : 'transparent',
                 }}
-                title={isVisible ? "Hide object" : "Show object"}
+                title={isVisible ? 'Hide object' : 'Show object'}
               >
                 {isVisible ? (
-                  <svg className="h-3.5 w-3.5" style={{ color: "var(--text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    style={{ color: 'var(--text-secondary)' }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -60,7 +81,13 @@ export function ObjectSelector({
                     />
                   </svg>
                 ) : (
-                  <svg className="h-3.5 w-3.5" style={{ color: "var(--text-tertiary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="h-3.5 w-3.5"
+                    style={{ color: 'var(--text-tertiary)' }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -74,25 +101,38 @@ export function ObjectSelector({
               <div className="min-w-0 flex-1">
                 <p
                   className="truncate text-sm font-semibold"
-                  style={{ color: isSelected ? "var(--accent-cyan)" : "var(--text-primary)" }}
+                  style={{
+                    color: isSelected
+                      ? 'var(--accent-cyan)'
+                      : 'var(--text-primary)',
+                  }}
                 >
                   {obj.name}
                 </p>
-                <p className="text-xs" style={{ color: "var(--text-tertiary)", fontFamily: "var(--font-mono)" }}>
-                  mesh_{index.toString().padStart(2, "0")}
+                <p
+                  className="text-xs"
+                  style={{
+                    color: 'var(--text-tertiary)',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                >
+                  mesh_{index.toString().padStart(2, '0')}
                 </p>
               </div>
 
               {isSelected && (
                 <div
                   className="h-2 w-2 rounded-full"
-                  style={{ background: "var(--accent-cyan)", boxShadow: "0 0 8px var(--accent-cyan)" }}
+                  style={{
+                    background: 'var(--accent-cyan)',
+                    boxShadow: '0 0 8px var(--accent-cyan)',
+                  }}
                 />
               )}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
