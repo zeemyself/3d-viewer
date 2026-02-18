@@ -85,6 +85,8 @@ export function normalizeGeometry(
   geometry: THREE.BufferGeometry,
   targetSize = 100,
 ): void {
+  geometry.rotateX(-Math.PI / 2)
+
   geometry.computeBoundingBox()
   const bbox = geometry.boundingBox!
   const size = new THREE.Vector3()
@@ -95,6 +97,9 @@ export function normalizeGeometry(
 
   geometry.scale(scale, scale, scale)
   geometry.center()
+
+  geometry.computeBoundingBox()
+  geometry.translate(0, -geometry.boundingBox!.min.y, 0)
 }
 
 export function formatNumber(num: number, decimals = 2): string {
