@@ -32,11 +32,11 @@ function buildBasicSettings(config: PrinterConfig) {
     },
     {
       label: 'Nozzle Temp',
-      value: config.printTemp ? `${config.printTemp}C` : undefined,
+      value: config.printTemp ? `${config.printTemp}°C` : undefined,
     },
     {
       label: 'Bed Temp',
-      value: config.bedTemp ? `${config.bedTemp}C` : undefined,
+      value: config.bedTemp ? `${config.bedTemp}°C` : undefined,
     },
     {
       label: 'Support',
@@ -79,9 +79,10 @@ export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
           <div
             className="flex h-9 w-9 items-center justify-center rounded-xl"
             style={{
-              background: 'linear-gradient(135deg, #7f56a2, #5f3c84)',
-              boxShadow: '0 10px 24px -16px rgba(95, 60, 132, 0.8)',
-              color: '#fff',
+              background:
+                'linear-gradient(135deg, var(--accent-plum), #8957e5)',
+              boxShadow: '0 0 24px -8px rgba(130, 80, 223, 0.4)',
+              color: 'var(--brand-icon-color)',
             }}
           >
             <svg
@@ -151,7 +152,7 @@ export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
                 <span
                   className="rounded-md px-1.5 py-0.5 text-xs"
                   style={{
-                    background: 'rgba(119, 79, 159, 0.14)',
+                    background: 'var(--accent-plum-dim)',
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
@@ -185,7 +186,7 @@ export function PrinterConfigPanel({ model }: PrinterConfigPanelProps) {
                   <div
                     key={key}
                     className="flex items-center justify-between rounded-lg px-2 py-2"
-                    style={{ background: 'rgba(255, 255, 255, 0.52)' }}
+                    style={{ background: 'var(--surface-inset)' }}
                   >
                     <span
                       className="max-w-[52%] truncate text-xs"

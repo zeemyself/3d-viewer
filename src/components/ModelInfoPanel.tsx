@@ -113,6 +113,7 @@ export function ModelInfoPanel({ model, visibility }: ModelInfoPanelProps) {
                 background: 'var(--accent-cyan-dim)',
                 color: 'var(--accent-cyan)',
                 fontFamily: 'var(--font-mono)',
+                border: '1px solid var(--border-accent)',
               }}
             >
               .{model.format}
@@ -126,23 +127,26 @@ export function ModelInfoPanel({ model, visibility }: ModelInfoPanelProps) {
               label: 'X',
               value: aggregatedInfo.dimensions.x,
               axis: 'width',
+              color: '#f47067',
             },
             {
               label: 'Y',
               value: aggregatedInfo.dimensions.y,
               axis: 'depth',
+              color: '#3fb950',
             },
             {
               label: 'Z',
               value: aggregatedInfo.dimensions.z,
               axis: 'height',
+              color: '#58a6ff',
             },
-          ].map(({ label, value, axis }) => (
+          ].map(({ label, value, axis, color }) => (
             <div key={label} className="metric-card p-3">
               <div className="mb-1 flex items-center gap-1.5">
                 <span
                   className="h-1.5 w-1.5 rounded-full"
-                  style={{ background: 'var(--accent-cyan)' }}
+                  style={{ background: color }}
                 />
                 <span
                   className="text-xs font-medium"
@@ -175,7 +179,7 @@ export function ModelInfoPanel({ model, visibility }: ModelInfoPanelProps) {
             <div className="flex items-center gap-2">
               <svg
                 className="h-4 w-4"
-                style={{ color: 'var(--accent-success)' }}
+                style={{ color: 'var(--accent-cyan)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -209,7 +213,7 @@ export function ModelInfoPanel({ model, visibility }: ModelInfoPanelProps) {
             <div className="flex items-center gap-2">
               <svg
                 className="h-4 w-4"
-                style={{ color: 'var(--accent-warning)' }}
+                style={{ color: 'var(--accent-plum)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

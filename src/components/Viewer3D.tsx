@@ -4,33 +4,53 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { normalizeGeometry } from '../lib/model-utils'
 import type { LoadedModel, ModelObject } from '../lib/types'
 
+function getViewerTheme() {
+  const style = getComputedStyle(document.documentElement)
+  const get = (prop: string) => style.getPropertyValue(prop).trim()
+  return {
+    bg: get('--viewer-bg'),
+    gridMajor: get('--viewer-grid-major'),
+    gridMinor: get('--viewer-grid-minor'),
+    modelColor: get('--viewer-model-color'),
+    ambientColor: get('--viewer-ambient-color'),
+    ambientIntensity: parseFloat(get('--viewer-ambient-intensity')) || 0.8,
+    mainLightColor: get('--viewer-main-light-color'),
+    mainLightIntensity: parseFloat(get('--viewer-main-light-intensity')) || 1.1,
+    fillColor: get('--viewer-fill-color'),
+    fillIntensity: parseFloat(get('--viewer-fill-intensity')) || 0.3,
+    rimColor: get('--viewer-rim-color'),
+    rimIntensity: parseFloat(get('--viewer-rim-intensity')) || 0.2,
+  }
+}
+
 function AxisIndicator() {
   return (
     <div
       className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-3 rounded-xl border px-3 py-2 md:bottom-5 md:right-5"
       style={{
-        borderColor: 'rgba(201, 175, 136, 0.8)',
-        background: 'rgba(255, 251, 243, 0.88)',
+        borderColor: 'var(--border-dim)',
+        background: 'var(--bg-glass-strong)',
+        backdropFilter: 'blur(12px)',
       }}
     >
       <div className="axis-pill">
         <span
           className="h-2 w-2 rounded-full"
-          style={{ background: '#dd5b34' }}
+          style={{ background: '#f47067' }}
         />
         X
       </div>
       <div className="axis-pill">
         <span
           className="h-2 w-2 rounded-full"
-          style={{ background: '#45a875' }}
+          style={{ background: '#3fb950' }}
         />
         Y
       </div>
       <div className="axis-pill">
         <span
           className="h-2 w-2 rounded-full"
-          style={{ background: '#3d65ba' }}
+          style={{ background: '#58a6ff' }}
         />
         Z
       </div>
@@ -43,9 +63,10 @@ const HintText = memo(function HintText() {
     <div
       className="pointer-events-none absolute right-4 top-14 rounded-2xl border px-3 py-2 text-xs font-medium md:right-5 md:top-16"
       style={{
-        borderColor: 'rgba(201, 175, 136, 0.8)',
-        background: 'rgba(255, 251, 243, 0.88)',
-        color: 'var(--text-secondary)',
+        borderColor: 'var(--border-dim)',
+        background: 'var(--bg-glass-strong)',
+        backdropFilter: 'blur(12px)',
+        color: 'var(--text-tertiary)',
       }}
     >
       Drag to orbit, scroll to zoom
@@ -66,7 +87,54 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
   const controlsRef = useRef<OrbitControls | null>(null)
   const meshesRef = useRef<THREE.Mesh[]>([])
   const animationIdRef = useRef<number | null>(null)
+  const lightsRef = useRef<{
+    ambient: THREE.AmbientLight
+    main: THREE.DirectionalLight
+    fill: THREE.DirectionalLight
+    rim: THREE.DirectionalLight
+    grid: THREE.GridHelper
+  } | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
+
+  // Apply theme to the THREE.js scene
+  const applyTheme = useCallback(() => {
+    const scene = sceneRef.current
+    const lights = lightsRef.current
+    if (!scene || !lights) return
+
+    const t = getViewerTheme()
+
+    scene.background = new THREE.Color(t.bg)
+
+    lights.ambient.color.set(t.ambientColor)
+    lights.ambient.intensity = t.ambientIntensity
+    lights.main.color.set(t.mainLightColor)
+    lights.main.intensity = t.mainLightIntensity
+    lights.fill.color.set(t.fillColor)
+    lights.fill.intensity = t.fillIntensity
+    lights.rim.color.set(t.rimColor)
+    lights.rim.intensity = t.rimIntensity
+
+    // Recreate grid with new colors
+    scene.remove(lights.grid)
+    const newGrid = new THREE.GridHelper(
+      300,
+      30,
+      new THREE.Color(t.gridMajor),
+      new THREE.Color(t.gridMinor),
+    )
+    newGrid.position.y = -0.1
+    scene.add(newGrid)
+    lights.grid = newGrid
+
+    // Update model material color
+    meshesRef.current.forEach((mesh) => {
+      if (mesh.material instanceof THREE.MeshStandardMaterial) {
+        mesh.material.color.set(t.modelColor)
+        mesh.material.needsUpdate = true
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -75,8 +143,10 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
     const width = container.clientWidth || 800
     const height = container.clientHeight || 600
 
+    const t = getViewerTheme()
+
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0xf5ead7)
+    scene.background = new THREE.Color(t.bg)
     sceneRef.current = scene
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 10000)
@@ -90,7 +160,7 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
     renderer.setSize(width, height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.12
+    renderer.toneMappingExposure = 1.2
     container.appendChild(renderer.domElement)
     rendererRef.current = renderer
 
@@ -104,27 +174,46 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
     controls.maxDistance = 2000
     controlsRef.current = controls
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.68)
+    const ambientLight = new THREE.AmbientLight(
+      t.ambientColor,
+      t.ambientIntensity,
+    )
     scene.add(ambientLight)
 
-    const mainLight = new THREE.DirectionalLight(0xfff8ec, 1.1)
-    mainLight.position.set(120, 140, 100)
+    const mainLight = new THREE.DirectionalLight(
+      t.mainLightColor,
+      t.mainLightIntensity,
+    )
+    mainLight.position.set(120, 160, 100)
     scene.add(mainLight)
 
-    const fillLight = new THREE.DirectionalLight(0x5f877f, 0.55)
+    const fillLight = new THREE.DirectionalLight(t.fillColor, t.fillIntensity)
     fillLight.position.set(-100, 70, -100)
     scene.add(fillLight)
 
-    const rimLight = new THREE.DirectionalLight(0xc17e41, 0.38)
+    const rimLight = new THREE.DirectionalLight(t.rimColor, t.rimIntensity)
     rimLight.position.set(0, -40, 100)
     scene.add(rimLight)
 
-    const gridHelper = new THREE.GridHelper(300, 30, 0xccb693, 0xe1d2ba)
+    const gridHelper = new THREE.GridHelper(
+      300,
+      30,
+      new THREE.Color(t.gridMajor),
+      new THREE.Color(t.gridMinor),
+    )
     gridHelper.position.y = -0.1
     scene.add(gridHelper)
 
     const axesHelper = new THREE.AxesHelper(30)
     scene.add(axesHelper)
+
+    lightsRef.current = {
+      ambient: ambientLight,
+      main: mainLight,
+      fill: fillLight,
+      rim: rimLight,
+      grid: gridHelper,
+    }
 
     setIsInitialized(true)
 
@@ -149,8 +238,17 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
     window.addEventListener('resize', handleResize, { passive: true })
     setTimeout(handleResize, 100)
 
+    // Listen for system theme changes
+    const darkMq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleThemeChange = () => {
+      // Small delay to let CSS variables update
+      setTimeout(applyTheme, 50)
+    }
+    darkMq.addEventListener('change', handleThemeChange)
+
     return () => {
       window.removeEventListener('resize', handleResize)
+      darkMq.removeEventListener('change', handleThemeChange)
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current)
       }
@@ -160,7 +258,7 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
         container.removeChild(renderer.domElement)
       }
     }
-  }, [])
+  }, [applyTheme])
 
   useEffect(() => {
     if (!sceneRef.current || !model || !isInitialized) return
@@ -174,16 +272,18 @@ export function Viewer3D({ model, objectVisibility }: Viewer3DProps) {
     })
     meshesRef.current = []
 
+    const t = getViewerTheme()
+
     model.objects.forEach((obj: ModelObject, index: number) => {
       const geometry = obj.geometry.clone()
       normalizeGeometry(geometry, 100)
 
       const material = new THREE.MeshStandardMaterial({
-        color: 0x1a6f63,
-        metalness: 0.12,
-        roughness: 0.58,
+        color: t.modelColor,
+        metalness: 0.2,
+        roughness: 0.45,
         side: THREE.DoubleSide,
-        envMapIntensity: 0.4,
+        envMapIntensity: 0.5,
       })
 
       const mesh = new THREE.Mesh(geometry, material)

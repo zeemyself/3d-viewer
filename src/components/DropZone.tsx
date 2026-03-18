@@ -54,7 +54,7 @@ export function DropZone({ onFileSelect, isLoading }: DropZoneProps) {
             <div className="relative mb-6 h-16 w-16">
               <div
                 className="absolute inset-0 rounded-full border-2"
-                style={{ borderColor: 'rgba(170, 143, 100, 0.35)' }}
+                style={{ borderColor: 'var(--border-dim)' }}
               />
               <div
                 className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
@@ -83,7 +83,15 @@ export function DropZone({ onFileSelect, isLoading }: DropZoneProps) {
           </div>
         ) : (
           <div className="animate-slide-up">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-[var(--bg-tertiary)]">
+            <div
+              className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl"
+              style={{
+                background:
+                  'linear-gradient(140deg, var(--accent-cyan-glow), var(--accent-cyan-dim))',
+                border: '1px solid var(--border-accent)',
+                boxShadow: '0 0 40px -12px var(--accent-cyan-glow)',
+              }}
+            >
               <svg
                 className="h-9 w-9"
                 style={{ color: 'var(--accent-cyan)' }}
@@ -102,7 +110,10 @@ export function DropZone({ onFileSelect, isLoading }: DropZoneProps) {
 
             <h2
               className="text-center text-3xl font-bold"
-              style={{ color: 'var(--text-primary)' }}
+              style={{
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-display)',
+              }}
             >
               Bring In Your Model
             </h2>

@@ -84,19 +84,22 @@ function HomePage() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  strokeWidth={2}
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
                   />
                 </svg>
               </div>
               <div>
                 <h1
-                  className="text-base font-bold"
-                  style={{ color: 'var(--text-primary)' }}
+                  className="text-sm font-bold"
+                  style={{
+                    color: 'var(--text-primary)',
+                    letterSpacing: '-0.01em',
+                  }}
                 >
                   Foundry View
                 </h1>
@@ -151,14 +154,14 @@ function HomePage() {
                 <div
                   className="subtle-card mb-3"
                   style={{
-                    borderColor: 'rgba(34, 197, 94, 0.25)',
-                    background: 'rgba(34, 197, 94, 0.06)',
+                    borderColor: 'var(--success-border-tint)',
+                    background: 'var(--success-bg-tint)',
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <svg
                       className="h-4 w-4"
-                      style={{ color: 'rgb(34, 197, 94)' }}
+                      style={{ color: 'var(--accent-success)' }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -172,7 +175,7 @@ function HomePage() {
                     </svg>
                     <span
                       className="text-xs font-semibold"
-                      style={{ color: 'rgb(34, 197, 94)' }}
+                      style={{ color: 'var(--accent-success)' }}
                     >
                       100% Local & Private
                     </span>
@@ -227,15 +230,15 @@ function HomePage() {
                 <div
                   className="subtle-card"
                   style={{
-                    borderColor: 'rgba(180, 35, 56, 0.35)',
-                    background: 'rgba(255, 236, 239, 0.9)',
+                    borderColor: 'var(--error-border-tint)',
+                    background: 'var(--error-bg-tint)',
                   }}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
                       style={{
-                        background: 'rgba(180, 35, 56, 0.1)',
+                        background: 'var(--error-bg-tint)',
                         color: 'var(--accent-error)',
                       }}
                     >
@@ -301,7 +304,7 @@ function HomePage() {
                 <div
                   className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl"
                   style={{
-                    background: 'rgba(180, 35, 56, 0.12)',
+                    background: 'var(--error-bg-tint)',
                     color: 'var(--accent-error)',
                   }}
                 >

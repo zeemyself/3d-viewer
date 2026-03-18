@@ -58,16 +58,17 @@ export const ObjectSelector = memo(function ObjectSelector({
             <div
               key={obj.id}
               onClick={() => onVisibilityChange(index, !isVisible)}
-              className={`flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors`}
+              className="flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all duration-200"
               style={{
                 background: isVisible
-                  ? 'rgba(34, 197, 94, 0.1)'
-                  : 'transparent',
+                  ? 'var(--accent-cyan-dim)'
+                  : 'var(--surface-inset)',
                 border: `1px solid ${
-                  isVisible
-                    ? 'rgba(34, 197, 94, 0.4)'
-                    : 'rgba(201, 175, 136, 0.3)'
+                  isVisible ? 'var(--border-accent)' : 'var(--border-dim)'
                 }`,
+                boxShadow: isVisible
+                  ? '0 0 20px -10px rgba(0, 200, 170, 0.2)'
+                  : 'none',
               }}
             >
               <div className="min-w-0 flex-1">
@@ -75,7 +76,7 @@ export const ObjectSelector = memo(function ObjectSelector({
                   className="truncate text-sm font-semibold"
                   style={{
                     color: isVisible
-                      ? 'var(--accent-success)'
+                      ? 'var(--accent-cyan)'
                       : 'var(--text-secondary)',
                   }}
                 >
@@ -96,8 +97,8 @@ export const ObjectSelector = memo(function ObjectSelector({
                 <div
                   className="h-2 w-2 rounded-full"
                   style={{
-                    background: 'var(--accent-success)',
-                    boxShadow: '0 0 8px var(--accent-success)',
+                    background: 'var(--accent-cyan)',
+                    boxShadow: '0 0 10px var(--accent-cyan)',
                   }}
                 />
               )}
