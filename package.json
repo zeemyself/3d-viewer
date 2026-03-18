@@ -11,6 +11,8 @@
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt --check",
     "fmt:fix": "oxfmt",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "verify": "bun run lint && bun run fmt && bun run build"
   },
   "dependencies": {
@@ -23,6 +25,7 @@
     "three": "^0.182.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/router-plugin": "^1.161.0",
     "@types/node": "^24.10.1",

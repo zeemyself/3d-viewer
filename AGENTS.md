@@ -35,11 +35,14 @@ TypeScript strict mode is enabled; resolve unused locals/params and avoid loose 
 
 ## Testing Guidelines
 
-There is no automated test suite configured yet.
+The project uses Playwright for end-to-end (E2E) testing.
 
 - Minimum pre-PR checks: `bun run verify`.
+- Run E2E tests: `bun run test:e2e`.
+- Start interactive E2E UI: `bun run test:e2e:ui`.
 - Validate changes manually in `bun run dev`, including `.stl`, `.obj`, and `.3mf` upload flows.
-- If adding tests, use `*.test.ts` / `*.test.tsx` naming near related source or under `src/__tests__/`.
+- Unit tests: use `*.test.ts` / `*.test.tsx` naming near related source or under `src/__tests__/`.
+- E2E tests: place in `tests/` with `.test.ts` extension.
 
 ## Commit & Pull Request Guidelines
 
